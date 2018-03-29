@@ -1,0 +1,68 @@
+body {
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.tile-container {
+  display: table;
+  margin: 20px auto;
+  border-collapse: collapse;
+}
+
+.tile {
+  display: table-cell;
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+}
+
+.count1 { color: blue; }
+.count2 { color: green; }
+.count3 { color: red; }
+.count4 { color: purple; }
+.count5 { color: orange; }
+.count6 { color: cyan; }
+.count7 { color: black; }
+.count8 { color: gray; }
+
+.revealed {
+  background: lightgray;
+}
+
+.mined {
+  background: red;
+  color: black;
+}
+
+.row {
+  display: table-row;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
