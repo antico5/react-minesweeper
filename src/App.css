@@ -30,6 +30,7 @@ body {
   display: table;
   margin: 20px auto;
   border-collapse: collapse;
+  cursor: pointer;
 }
 
 .tile {

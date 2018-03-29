@@ -33,8 +33,16 @@ class UnrevealedTile extends Component {
     this.props.onClicked()
   }
 
+  flagTile = (e) => {
+    this.props.tile.toggleFlag()
+    this.props.onClicked()
+    e.preventDefault()
+    return false
+  }
+
   render() {
-    return <div className='tile' onClick={this.revealTile}>
+    return <div className='tile' onClick={this.revealTile} onContextMenu={this.flagTile}>
+      { this.props.tile.flagged ? 'F' : '' }
     </div>
   }
 }

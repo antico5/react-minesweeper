@@ -1,5 +1,5 @@
-const columns = 10
-const rows = 10
+const columns = 20
+const rows = 20
 
 class Minefield {
   constructor(){
@@ -44,11 +44,16 @@ class MineTile {
     this.column = column
     this.mined = Math.random() > 0.9
     this.revealed = false
+    this.flagged = false
     this.adjacentMines = 0
   }
 
   reveal(){
     this.revealed = true
+  }
+
+  toggleFlag(){
+    this.flagged = !this.flagged
   }
 
   chainReveal(){
