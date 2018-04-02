@@ -1,15 +1,25 @@
 class Minefield {
   constructor(options = {}){
     this.onUpdate = options.onUpdate
-    this.rows = options.rows || 15
-    this.columns = options.columns || 15
-    this.gameEnded = false
+    this.rows = options.rows || 10
+    this.columns = options.columns || 10  
+    this.gameLost = false
+    this.unrevealedTileCount = this.rows * this.columns
+    this.mineCount = 0
     this.tiles = this.generateMineField()
     this.calculateAdjacentMines()
   }
 
-  endGame(){
-    this.gameEnded = true
+  decreaseUnrevealedTiles(){
+    this.unrevealedTileCount -= 1
+  }
+
+  isGameWon(){
+    return !this.gameLost && this.unrevealedTileCount == this.mineCount
+  }
+
+  loseGame(){
+    this.gameLost = true
   }
 
   getTile(x, y){
@@ -23,8 +33,10 @@ class Minefield {
     for (var i = 0; i < this.rows; i++) {
       tiles[i] = []
       for( var j = 0; j < this.columns; j++) {
-        var mined = Math.random() > 0.8
-        tiles[i].push(new MineTile(this,i,j))
+        var mine = new MineTile(this,i,j)
+        tiles[i].push(mine)
+        if(mine.mined)
+          this.mineCount += 1
       }
     }
     return tiles
@@ -54,9 +66,12 @@ class MineTile {
   }
 
   reveal(){
-    this.revealed = true
+    if(!this.revealed){
+      this.revealed = true
+      this.minefield.decreaseUnrevealedTiles()
+    }
     if(this.mined)
-      this.minefield.endGame()
+      this.minefield.loseGame()
   }
 
   toggleFlag(){
@@ -68,7 +83,7 @@ class MineTile {
     if (this.revealed) return
     this.reveal()
     if(this.isClear())
-      this.getCrossNeighbors().forEach(tile => tile.chainReveal({notify: false}))
+      this.getAllNeighbors().forEach(tile => tile.chainReveal({notify: false}))
     if(options.notify)
     this.minefield.onUpdate()
   }

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import {Minefield, MineTile} from './Minefield.js';
 import logo from './logo.svg';
+import normalSmile from './images/smile.png';
+import deadSmile from './images/dead.png';
+import winSmile from './images/win.png';
 import './App.css';
 
 
@@ -54,21 +57,40 @@ class Tile extends Component {
   }
 }
 
+class FaceControl extends Component {
+  render() {
+    var minefield = this.props.minefield
+    var src
+    if (minefield.isGameWon())
+      src = winSmile
+    else if (minefield.gameLost)
+      src = deadSmile
+    else
+      src = normalSmile
+    return <img className='face-control' src={src} onClick={this.props.onclick}/>
+  }
+}
 
 class App extends Component {
   componentWillMount(){
-    var minefield = new Minefield({onUpdate: this.reRender })
-    this.setState({ minefield: minefield })
+    this.restartGame()
   }
 
   reRender = ()=>{
     this.forceUpdate()
-    console.log('updating');
-    
   }
 
   preventDefault = (e) => {
     e.preventDefault()
+  }
+
+  restartGame = () => {
+    var minefield = new Minefield({onUpdate: this.reRender })
+    this.setState({ minefield: minefield })
+  }
+
+  isGameEnded = () => {
+    return this.state.minefield.gameLost || this.state.minefield.isGameWon()
   }
 
   render() {
@@ -78,12 +100,13 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to Minesweeper</h1>
-        </header>
+        </header> 
+        <FaceControl minefield={minefield} onclick={this.restartGame}/>
         <div className='tile-container' onContextMenu={this.preventDefault} >
           { minefield.tiles.map( row => (
-            <div style={{display: 'table-row'}}>
+            <div className='tile-row'>
               { row.map( tile => (
-                <Tile tile={tile} gameEnded={minefield.gameEnded} />
+                <Tile tile={tile} gameEnded={this.isGameEnded()} />
               ))}
             </div>
           ))}

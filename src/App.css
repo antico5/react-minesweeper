@@ -33,11 +33,8 @@ body {
   cursor: pointer;
 }
 
-.game-end-overlay{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0.1;
+.tile-row {
+  display: table-row;
 }
 
 .tile {
@@ -46,6 +43,18 @@ body {
   width: 30px;
   height: 30px;
   border: 1px solid black;
+}
+
+.game-end-overlay{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+}
+
+.face-control {
+  margin-top: 20px;
+  cursor: pointer;
 }
 
 .count1 { color: blue; }
