@@ -29,15 +29,14 @@ class RevealedTile extends Component {
 
 class UnrevealedTile extends Component {
   revealTile =() =>{
+    if(this.props.tile.flagged || this.props.gameEnded) return
     this.props.tile.chainReveal()
-    this.props.onClicked()
   }
 
   flagTile = (e) => {
-    this.props.tile.toggleFlag()
-    this.props.onClicked()
+    if(!this.props.gameEnded)
+      this.props.tile.toggleFlag()
     e.preventDefault()
-    return false
   }
 
   render() {
@@ -50,51 +49,45 @@ class UnrevealedTile extends Component {
 class Tile extends Component {
   render() {
     var tile = this.props.tile
-    return tile.revealed ? <RevealedTile tile={tile}/> : <UnrevealedTile tile={tile} onClicked={this.props.reRender}/>
+    return tile.revealed ? <RevealedTile tile={tile}/> 
+    : <UnrevealedTile tile={tile} gameEnded={this.props.gameEnded}/>
   }
 }
 
-window.minefield = new Minefield()
 
 class App extends Component {
   componentWillMount(){
-    this.setState({ tiles: window.minefield.tiles })
+    var minefield = new Minefield({onUpdate: this.reRender })
+    this.setState({ minefield: minefield })
   }
 
   reRender = ()=>{
     this.forceUpdate()
+    console.log('updating');
+    
   }
 
-  renderTiles(){
-    const tiles = []
-
-    for(let row of this.state.tiles){
-      for(let tile of row){
-        tiles.push(
-          <Tile key={tiles.length} tile={tile} reRender={this.reRender} />
-        )
-      }
-    }
-    return tiles
+  preventDefault = (e) => {
+    e.preventDefault()
   }
 
   render() {
+    var minefield = this.state.minefield
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to Minesweeper</h1>
         </header>
-      <div className='tile-container'>
-        { /* this.renderTiles() */ }
-        { this.state.tiles.map( row => (
-          <div style={{display: 'table-row'}}>
-            { row.map( tile => (
-              <Tile tile={tile} reRender={this.reRender} />
-            ))}
-          </div>
-        ))}
-      </div>
+        <div className='tile-container' onContextMenu={this.preventDefault} >
+          { minefield.tiles.map( row => (
+            <div style={{display: 'table-row'}}>
+              { row.map( tile => (
+                <Tile tile={tile} gameEnded={minefield.gameEnded} />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

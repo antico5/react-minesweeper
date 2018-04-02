@@ -1,23 +1,28 @@
-const columns = 20
-const rows = 20
-
 class Minefield {
-  constructor(){
+  constructor(options = {}){
+    this.onUpdate = options.onUpdate
+    this.rows = options.rows || 15
+    this.columns = options.columns || 15
+    this.gameEnded = false
     this.tiles = this.generateMineField()
     this.calculateAdjacentMines()
   }
 
+  endGame(){
+    this.gameEnded = true
+  }
+
   getTile(x, y){
-    if(x >= 0 && x < columns && y >= 0 && y < rows){
+    if(x >= 0 && x < this.columns && y >= 0 && y < this.rows){
       return this.tiles[x][y]
     }
   }
 
   generateMineField(){
     var tiles = []
-    for (var i = 0; i < rows; i++) {
+    for (var i = 0; i < this.rows; i++) {
       tiles[i] = []
-      for( var j = 0; j < columns; j++) {
+      for( var j = 0; j < this.columns; j++) {
         var mined = Math.random() > 0.8
         tiles[i].push(new MineTile(this,i,j))
       }
@@ -26,8 +31,8 @@ class Minefield {
   }
 
   calculateAdjacentMines(){
-    for (var i = 0; i < rows; i++) {
-      for( var j = 0; j < columns; j++) {
+    for (var i = 0; i < this.rows; i++) {
+      for( var j = 0; j < this.columns; j++) {
         var tile = this.getTile(j,i)
         if(tile.mined){
           tile.getAllNeighbors().forEach(tile => tile.increaseAdjacentMines())
@@ -50,17 +55,22 @@ class MineTile {
 
   reveal(){
     this.revealed = true
+    if(this.mined)
+      this.minefield.endGame()
   }
 
   toggleFlag(){
     this.flagged = !this.flagged
+    this.minefield.onUpdate()
   }
 
-  chainReveal(){
+  chainReveal(options = {notify: true}){
     if (this.revealed) return
     this.reveal()
     if(this.isClear())
-      this.getCrossNeighbors().forEach(tile => tile.chainReveal())
+      this.getCrossNeighbors().forEach(tile => tile.chainReveal({notify: false}))
+    if(options.notify)
+    this.minefield.onUpdate()
   }
 
 
